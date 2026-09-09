@@ -154,7 +154,7 @@ export function FilterPanel({
               id="search-input"
               value={filterState.search}
               onChange={(e) => onFilterChange({ search: e.target.value })}
-              placeholder="مثال: زياد، ECQ051، أو Flutter..."
+              placeholder="مثال: كريم، ECQ051، أو Flutter..."
               className="w-full pr-10 pl-3 py-2.5 text-xs bg-slate-50 hover:bg-white focus:bg-white rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/15 focus:outline-hidden transition-all text-slate-800 placeholder-slate-400 font-medium"
             />
           </div>
