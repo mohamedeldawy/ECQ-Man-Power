@@ -1,5 +1,5 @@
 {
-  "name": "لوحة متابعة فرق ECQ",
+  "name": "ECQ Man Power Dashboard",
   "description": "لوحة تنظيمية لمتابعة فرق وموظفي ECQ مع فلاتر متقدمة وقوائم منسدلة لتصفية التخصصات وكروت عصرية أنيقة مربوطة مباشرة مع Google Sheets.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

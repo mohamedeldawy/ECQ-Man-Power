@@ -40,7 +40,7 @@ export function Header({ syncStatus, lastUpdated, onRefresh }: HeaderProps) {
               <span>فرق ECQ · الحصر والتوزيع التنظيمي</span>
             </div>
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight font-['Almarai',sans-serif]">
-              لوحة متابعة فرق ECQ
+              ECQ Man Power Dashboard
             </h1>
             <p className="text-xs sm:text-sm text-slate-300/90 mt-1 max-w-xl font-normal leading-relaxed">
               مربوطة مباشرة بالشيت الأصلي — أي تعديل في Google Sheets ينعكس فورياً هنا مع تحديث ذكي
