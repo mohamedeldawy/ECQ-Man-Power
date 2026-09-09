@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة متابعة فرق ECQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Cairo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0f172a;
+    --ink-soft:#64748b;
+    --hair:#e2e8f0;
+    --hair-strong:#cbd5e1;
+    --page:#f8fafc;
+    --card:#ffffff;
+    --accent:#4f46e5;
+    --accent-soft:#eef2ff;
+    --teal:#059669;    --teal-bg:#ecfdf5;   --teal-border:#a7f3d0;
+    --amber:#d97706;   --amber-bg:#fffbeb;  --amber-border:#fde68a;
+    --blue:#2563eb;    --blue-bg:#eff6ff;   --blue-border:#bfdbfe;
+    --slate:#475569;   --slate-bg:#f1f5f9;  --slate-border:#e2e8f0;
+    --red:#e11d48;     --red-bg:#fff1f2;    --red-border:#fecdd3;
+    --purple:#7c3aed;  --purple-bg:#f5f3ff; --purple-border:#ddd6fe;
+    --radius:18px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--page);
+    color:var(--ink);
+    font-family:'Cairo',sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,.brand-name{font-family:'Almarai',sans-serif;}
+
+  /* ===== HERO ===== */
+  .hero{
+    background:linear-gradient(135deg,#0b1120 0%,#1e1b4b 50%,#0f172a 100%);
+    padding:30px 24px 44px;
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,0.15);
+  }
+  .hero::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(600px 360px at 85% -10%, rgba(99,102,241,0.22), transparent 65%),
+      radial-gradient(500px 300px at 15% 120%, rgba(14,165,233,0.18), transparent 60%);
+    pointer-events:none;
+  }
+  .hero-inner{
+    max-width:1240px;
+    margin:0 auto;
+    position:relative;
+    z-index:1;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:24px;
+    flex-wrap:wrap;
+  }
+  .brand-row{display:flex;align-items:center;gap:18px;}
+  .logo-box{
+    background:#fff;
+    border-radius:18px;
+    padding:10px;
+    width:64px;
+    height:64px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 8px 24px rgba(0,0,0,0.3);
+    flex-shrink:0;
+  }
+  .logo-box img{max-width:100%;max-height:100%;object-fit:contain;display:block;}
+  .brand-text .eyebrow{
+    font-size:12px;
+    color:#a5b4fc;
+    font-weight:700;
+    letter-spacing:.3px;
+    margin:0 0 4px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .brand-text h1{
+    font-weight:800;
+    font-size:27px;
+    margin:0;
+    color:#ffffff;
+  }
+  .brand-text .sub{
+    color:#cbd5e1;
+    font-size:13.5px;
+    margin-top:6px;
+    max-width:520px;
+    font-weight:400;
+  }
+
+  .sync-box{display:flex;flex-direction:column;align-items:flex-end;gap:10px;}
+  .sync-line{
+    font-size:12px;
+    color:#e2e8f0;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:rgba(255,255,255,.1);
+    backdrop-filter:blur(8px);
+    padding:6px 14px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.15);
+  }
+  .dot{width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;}
+  .dot.err{background:#ef4444;}
+  .dot.loading{background:#f59e0b;animation:pulse 1s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+  .refresh-btn{
+    border:1px solid rgba(255,255,255,.2);
+    background:rgba(255,255,255,.15);
+    color:#fff;
+    font-family:'Cairo',sans-serif;
+    font-size:13px;
+    font-weight:700;
+    padding:8px 20px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:all .15s ease;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .refresh-btn:hover{background:rgba(255,255,255,.25);transform:translateY(-1px);}
+
+  .wrap{max-width:1240px;margin:0 auto;padding:0 24px 80px;}
+
+  /* ===== STATS ===== */
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:14px;
+    margin-top:-26px;
+    margin-bottom:28px;
+    position:relative;
+    z-index:2;
+  }
+  .stat{
+    background:var(--card);
+    border-radius:16px;
+    padding:16px 20px;
+    box-shadow:0 8px 20px rgba(15,23,42,.06);
+    border:1px solid var(--hair);
+    border-right:4px solid var(--hair-strong);
+    cursor:pointer;
+    transition:all .2s ease;
+  }
+  .stat:hover{transform:translateY(-2px);box-shadow:0 12px 24px rgba(15,23,42,.08);}
+  .stat .num{font-weight:800;font-size:28px;line-height:1;font-family:'Almarai',sans-serif;}
+  .stat .lbl{font-size:12.5px;color:var(--ink-soft);margin-top:8px;font-weight:700;}
+  .stat.total{border-color:var(--ink);border-left:1px solid var(--hair);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);}
+  .stat.total .num{color:var(--ink);}
+  .stat.vacant{border-color:var(--purple);border-left:1px solid var(--hair);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);}
+  .stat.vacant .num{color:var(--purple);}
+  .stat.full{border-color:var(--teal);border-left:1px solid var(--hair);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);}
+  .stat.full .num{color:var(--teal);}
+  .stat.part{border-color:var(--amber);border-left:1px solid var(--hair);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);}
+  .stat.part .num{color:var(--amber);}
+  .stat.term{border-color:var(--red);border-left:1px solid var(--hair);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);}
+  .stat.term .num{color:var(--red);}
+
+  /* ===== FILTER PANEL ===== */
+  .panel{
+    background:var(--card);
+    border-radius:var(--radius);
+    box-shadow:0 6px 22px rgba(15,23,42,.04);
+    border:1px solid var(--hair);
+    padding:20px 24px;
+    margin-bottom:28px;
+  }
+  .panel-row{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;margin-bottom:18px;}
+  .panel-row:last-child{margin-bottom:0;}
+  .filter-group{display:flex;flex-direction:column;gap:8px;}
+  .filter-group .ttl{font-size:12px;font-weight:800;color:var(--ink);}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{
+    border:1px solid var(--hair);background:#f8fafc;color:var(--ink);
+    font-family:'Cairo',sans-serif;font-size:12.5px;font-weight:700;
+    padding:6px 16px;border-radius:999px;cursor:pointer;transition:all .15s ease;
+  }
+  .chip:hover{border-color:var(--accent);color:var(--accent);background:#fff;}
+  .chip.active{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 4px 12px rgba(79,70,229,.25);}
+
+  /* ===== SPECIALIZATION DROPDOWN ===== */
+  .dropdown-wrap{position:relative;flex:1;min-width:280px;max-width:380px;}
+  .dropdown-btn{
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    background:#fff;
+    border:1px solid var(--hair-strong);
+    border-radius:14px;
+    padding:9px 16px;
+    font-family:'Cairo',sans-serif;
+    font-size:13.5px;
+    font-weight:700;
+    color:var(--ink);
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .dropdown-btn:hover{border-color:var(--accent);}
+  .dropdown-btn.active{
+    background:var(--accent-soft);
+    border-color:var(--accent);
+    color:var(--accent);
+    box-shadow:0 0 0 3px rgba(79,70,229,.12);
+  }
+  .dropdown-btn .icon{font-size:14px;color:var(--accent);display:inline-flex;}
+  .dropdown-btn .arrow{font-size:11px;color:var(--ink-soft);transition:transform .2s;}
+  .dropdown-btn.open .arrow{transform:rotate(180deg);}
+
+  .dropdown-menu{
+    position:absolute;
+    top:calc(100% + 6px);
+    right:0;
+    left:0;
+    background:#fff;
+    border-radius:16px;
+    border:1px solid var(--hair);
+    box-shadow:0 14px 34px rgba(15,23,42,.12);
+    z-index:100;
+    display:none;
+    overflow:hidden;
+  }
+  .dropdown-menu.show{display:block;}
+  .dropdown-search{
+    padding:10px 14px;
+    border-bottom:1px solid var(--hair);
+    background:#f8fafc;
+  }
+  .dropdown-search input{
+    width:100%;
+    padding:8px 12px;
+    border-radius:10px;
+    border:1px solid var(--hair-strong);
+    font-family:'Cairo',sans-serif;
+    font-size:12.5px;
+    outline:none;
+  }
+  .dropdown-search input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(79,70,229,.15);}
+  .dropdown-list{max-height:260px;overflow-y:auto;padding:6px;}
+  .dropdown-item{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:8px 14px;
+    font-family:'Cairo',sans-serif;
+    font-size:13px;
+    color:var(--ink);
+    background:transparent;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    text-align:right;
+    transition:background .12s ease;
+  }
+  .dropdown-item:hover{background:var(--slate-bg);}
+  .dropdown-item.selected{background:var(--accent-soft);color:var(--accent);font-weight:700;}
+  .dropdown-item .count{
+    font-size:11px;
+    font-family:'JetBrains Mono',monospace;
+    background:var(--hair);
+    color:var(--ink-soft);
+    padding:2px 8px;
+    border-radius:999px;
+  }
+  .dropdown-item.selected .count{background:var(--accent);color:#fff;}
+
+  /* Search & Reset */
+  .search-wrap{flex:1;min-width:240px;max-width:320px;}
+  .search-wrap input{
+    width:100%;border:1px solid var(--hair-strong);border-radius:14px;
+    padding:10px 16px;font-family:'Cairo',sans-serif;font-size:13.5px;background:#fff;color:var(--ink);
+  }
+  .search-wrap input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,70,229,.12);}
+  .reset-btn{
+    border:1px solid var(--hair-strong);background:#fff;color:var(--ink-soft);
+    font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;
+    padding:10px 18px;border-radius:14px;cursor:pointer;align-self:flex-end;
+    transition:all .15s ease;
+  }
+  .reset-btn:hover{border-color:var(--ink);color:var(--ink);}
+
+  .result-line{font-size:13px;color:var(--ink-soft);margin:0 0 16px;font-weight:600;}
+  .result-line b{color:var(--ink);}
+
+  /* ===== TEAM SECTIONS ===== */
+  .team-section{margin-bottom:34px;}
+  .team-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+  .team-head h2{font-weight:800;font-size:18px;margin:0;color:var(--ink);}
+  .team-head .tag{
+    font-size:12px;color:var(--slate);font-weight:700;
+    background:var(--slate-bg);padding:4px 12px;border-radius:999px;
+    border:1px solid var(--hair);
+  }
+  .team-head .line{flex:1;height:1px;background:var(--hair);}
+
+  /* ===== CHIC EMPLOYEE CARDS ===== */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:16px;}
+  
+  .employee-card{
+    background:var(--card);
+    border:1px solid var(--hair);
+    border-radius:18px;
+    padding:18px 20px;
+    box-shadow:0 4px 14px rgba(15,23,42,.03);
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    position:relative;
+    transition:all .2s cubic-bezier(0.16,1,0.3,1);
+  }
+  .employee-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 12px 28px rgba(15,23,42,.08);
+    border-color:#c7d2fe;
+  }
+
+  .employee-card.vacant{
+    border:2px dashed #ddd6fe;
+    background:linear-gradient(180deg,#faf5ff 0%,#ffffff 100%);
+    box-shadow:none;
+  }
+  .employee-card.vacant:hover{border-color:#a78bfa;transform:translateY(-2px);}
+
+  .card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:14px;
+    gap:8px;
+  }
+  .team-pill{
+    font-size:11px;
+    font-weight:700;
+    padding:3px 10px;
+    border-radius:6px;
+    background:var(--slate-bg);
+    color:var(--slate);
+    border:1px solid var(--hair);
+  }
+
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    font-size:11.5px;
+    font-weight:700;
+    padding:4px 12px;
+    border-radius:999px;
+    white-space:nowrap;
+    border:1px solid transparent;
+  }
+  .badge .dot-ind{width:6px;height:6px;border-radius:50%;display:inline-block;}
+  .badge.full{background:var(--teal-bg);color:var(--teal);border-color:var(--teal-border);}
+  .badge.full .dot-ind{background:var(--teal);}
+  .badge.part{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-border);}
+  .badge.part .dot-ind{background:var(--amber);}
+  .badge.p2f{background:var(--blue-bg);color:var(--blue);border-color:var(--blue-border);}
+  .badge.p2f .dot-ind{background:var(--blue);}
+  .badge.f2p{background:var(--slate-bg);color:var(--slate);border-color:var(--slate-border);}
+  .badge.f2p .dot-ind{background:var(--slate);}
+  .badge.term{background:var(--red-bg);color:var(--red);border-color:var(--red-border);}
+  .badge.term .dot-ind{background:var(--red);}
+  .badge.vacant{background:var(--purple-bg);color:var(--purple);border-color:var(--purple-border);}
+  .badge.vacant .dot-ind{background:var(--purple);}
+
+  .profile-block{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:14px;
+  }
+  .avatar{
+    width:46px;
+    height:46px;
+    border-radius:14px;
+    background:linear-gradient(135deg,#6366f1,#4338ca);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+    font-size:13px;
+    box-shadow:0 4px 12px rgba(99,102,241,.25);
+    flex-shrink:0;
+  }
+  .avatar.vacant-avatar{
+    background:#ede9fe;
+    color:#7c3aed;
+    border:1px solid #ddd6fe;
+    box-shadow:none;
+    font-size:18px;
+  }
+  .name-block{min-width:0;flex:1;}
+  .emp-name{
+    font-weight:800;
+    font-size:15px;
+    color:var(--ink);
+    margin:0 0 2px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .emp-name.vacant-title{color:#6b21a8;font-weight:700;}
+  .emp-code{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    background:#f1f5f9;
+    padding:2px 7px;
+    border-radius:6px;
+    display:inline-block;
+    cursor:pointer;
+  }
+  .emp-code:hover{background:#e2e8f0;color:var(--ink);}
+
+  .title-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:#f8fafc;
+    border:1px solid var(--hair);
+    padding:8px 12px;
+    border-radius:10px;
+    margin-bottom:10px;
+  }
+  .title-icon{color:var(--ink-soft);font-size:13px;display:flex;}
+  .title-text{font-size:13px;font-weight:700;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+  .side-task{
+    background:var(--amber-bg);
+    border:1px solid var(--amber-border);
+    border-radius:12px;
+    padding:9px 12px;
+    font-size:12px;
+    color:#92400e;
+    margin-top:8px;
+    display:flex;
+    gap:8px;
+    align-items:flex-start;
+  }
+  .side-task .pin{flex-shrink:0;font-size:14px;}
+  .side-task .task-content{line-height:1.5;}
+
+  .vacant-badge-box{
+    background:var(--purple-bg);
+    border:1px solid var(--purple-border);
+    border-radius:10px;
+    padding:7px 12px;
+    font-size:11.5px;
+    color:var(--purple);
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    margin-top:8px;
+  }
+
+  .card-footer{
+    margin-top:14px;
+    padding-top:10px;
+    border-top:1px solid #f1f5f9;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:11px;
+    color:var(--ink-soft);
+  }
+  .copy-btn{
+    background:transparent;
+    border:none;
+    color:var(--ink-soft);
+    font-family:'Cairo',sans-serif;
+    font-size:11px;
+    font-weight:700;
+    cursor:pointer;
+    padding:2px 6px;
+    border-radius:6px;
+    transition:all .12s;
+  }
+  .copy-btn:hover{color:var(--accent);background:var(--accent-soft);}
+
+  .empty,.state-box{text-align:center;padding:60px 20px;color:var(--ink-soft);font-size:14px;background:var(--card);border:1px solid var(--hair);border-radius:var(--radius);}
+  .state-box.error{color:var(--red);}
+
+  footer{margin-top:36px;text-align:center;font-size:12.5px;color:var(--ink-soft);}
+
+  @media (max-width:860px){
+    .stats{grid-template-columns:repeat(2,1fr);margin-top:-16px;}
+    .hero-inner{flex-direction:column;align-items:flex-start;}
+    .sync-box{align-items:flex-start;width:100%;}
+    .dropdown-wrap{max-width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="brand-row">
+      <div class="logo-box"><img src="https://logopng-omega.vercel.app/file.png" alt="شعار الشركة"></div>
+      <div class="brand-text">
+        <p class="eyebrow">✨ فرق ECQ &middot; الحصر التنظيمي الذكي</p>
+        <h1>لوحة متابعة فرق ECQ</h1>
+        <p class="sub">مربوطة مباشرة بالشيت الأصلي — أي تعديل في Google Sheets يظهر هنا تلقائيًا.</p>
+      </div>
+    </div>
+    <div class="sync-box">
+      <div class="sync-line"><span class="dot loading" id="syncDot"></span><span id="syncText">جاري التحميل...</span></div>
+      <button class="refresh-btn" id="refreshBtn">تحديث الآن ↻</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="stats">
+    <div class="stat total" data-status="all"><div class="num" id="statTotal">–</div><div class="lbl">إجمالي التخصصات</div></div>
+    <div class="stat vacant" data-status="Vacant"><div class="num" id="statVacant">–</div><div class="lbl">وظائف شاغرة</div></div>
+    <div class="stat full" data-status="Full Time"><div class="num" id="statFull">–</div><div class="lbl">دوام كامل نشط</div></div>
+    <div class="stat part" data-status="Part Time"><div class="num" id="statPart">–</div><div class="lbl">دوام جزئي نشط</div></div>
+    <div class="stat term" data-status="Terminated"><div class="num" id="statTerm">–</div><div class="lbl">انتهت خدمتهم</div></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-row">
+      <div class="filter-group" style="flex:1;">
+        <span class="ttl">الفريق التنظيمي</span>
+        <div class="chips" id="teamChips"></div>
+      </div>
+      <div class="filter-group" style="flex:2;">
+        <span class="ttl">حالة الدوام والعمل</span>
+        <div class="chips" id="statusChips"></div>
+      </div>
+    </div>
+
+    <div class="panel-row">
+      <!-- Specialization Dropdown -->
+      <div class="filter-group dropdown-wrap">
+        <span class="ttl">تصفية بالتخصص / المسمى الوظيفي</span>
+        <button type="button" class="dropdown-btn" id="dropdownTrigger">
+          <span style="display:flex;align-items:center;gap:8px;overflow:hidden;">
+            <span class="icon">💼</span>
+            <span id="dropdownLabel" style="text-overflow:ellipsis;white-space:nowrap;overflow:hidden;">جميع التخصصات / المسميات</span>
+          </span>
+          <span class="arrow">▼</span>
+        </button>
+
+        <div class="dropdown-menu" id="dropdownMenu">
+          <div class="dropdown-search">
+            <input type="text" id="dropdownSearchInput" placeholder="ابحث عن تخصص أو مسمى...">
+          </div>
+          <div class="dropdown-list" id="dropdownList"></div>
+        </div>
+      </div>
+
+      <!-- Search Box -->
+      <div class="filter-group search-wrap">
+        <span class="ttl">بحث بالاسم أو الكود</span>
+        <input type="text" id="searchBox" placeholder="مثال: زياد أو ECQ051">
+      </div>
+
+      <button class="reset-btn" id="resetBtn">إعادة تعيين الفلاتر</button>
+    </div>
+  </div>
+
+  <p class="result-line" id="resultLine" style="display:none;"></p>
+  <div id="content"></div>
+
+  <footer>لوحة داخلية لمتابعة فرق ECQ &middot; البيانات محدّثة مباشرة من Google Sheets</footer>
+</div>
+
+<script>
+/* ====== CONFIG ====== */
+const SHEET_ID = "1lF7QjS6UqmIHuAK44J7eo3OIZrp0WJiFUWyxhdrNhCY";
+const SHEET_GID = "0";
+const PUB_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQcbzpMic17dKGevNqc9MP57nM82JOpMOtpnz34A6PirIVHgwhGAB7JqDhRXWYRdPID1F3BIM1WjXnm/pub?output=csv";
+const AUTO_REFRESH_MINUTES = 5;
+/* ===================== */
+
+const STATUS_LABELS = {
+  "Full Time":"دوام كامل",
+  "Part Time":"دوام جزئي",
+  "From Part To Full Time":"تحويل لدوام كامل",
+  "From Full To Part Time":"تحويل لدوام جزئي",
+  "Terminated":"انتهت الخدمة"
+};
+const STATUS_CLASS = {
+  "Full Time":"full",
+  "Part Time":"part",
+  "From Part To Full Time":"p2f",
+  "From Full To Part Time":"f2p",
+  "Terminated":"term"
+};
+const TEAM_LABELS_KNOWN = {
+  "Junior Team":"جونيور",
+  "Middle Team":"ميدل",
+  "Senior Team":"سينيور",
+  "Bachelor Team":"بكالوريوس"
+};
+
+let data = [];
+const state = { team:"all", status:"all", title:"all", q:"" };
+let refreshTimer = null;
+let allTitles = [];
+
+function loadViaJSONP(){
+  return new Promise((resolve, reject)=>{
+    const cbName = "__gvizCb_" + Date.now() + "_" + Math.floor(Math.random()*1e6);
+    let settled = false;
+
+    const script = document.createElement('script');
+    const url = "https://docs.google.com/spreadsheets/d/" + SHEET_ID +
+      "/gviz/tq?gid=" + SHEET_GID + "&headers=0&_ts=" + Date.now() +
+      "&tqx=responseHandler:" + cbName;
+
+    function cleanup(){
+      delete window[cbName];
+      if(script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    window[cbName] = function(response){
+      if(settled) return;
+      settled = true;
+      cleanup();
+      if(response && response.table && Array.isArray(response.table.rows)){
+        resolve(response);
+      } else {
+        reject(new Error('استجابة غير متوقعة من جوجل'));
+      }
+    };
+
+    script.onerror = function(){
+      if(settled) return;
+      settled = true;
+      cleanup();
+      reject(new Error('تعذر تحميل سكريبت البيانات'));
+    };
+
+    script.src = url;
+    document.head.appendChild(script);
+
+    setTimeout(function(){
+      if(settled) return;
+      settled = true;
+      cleanup();
+      reject(new Error('انتهت مهلة الانتظار'));
+    }, 12000);
+  });
+}
+
+async function loadViaFetch(){
+  const bust = PUB_CSV_URL + (PUB_CSV_URL.includes('?') ? '&' : '?') + '_ts=' + Date.now();
+  const res = await fetch(bust, {cache:"no-store"});
+  if(!res.ok) throw new Error('HTTP ' + res.status);
+  const text = await res.text();
+  if(!text || text.trim().startsWith('<')) throw new Error('unexpected response');
+  return parseCSV(text);
+}
+
+function gvizResponseToRows(response){
+  return response.table.rows.map(row=>{
+    const cells = row && row.c ? row.c : [];
+    return cells.map(cell => (cell && cell.v !== null && cell.v !== undefined) ? String(cell.v) : "");
+  });
+}
+
+function parseCSV(text){
+  const rows = [];
+  let row = [], field = "", inQuotes = false;
+  for(let i=0;i<text.length;i++){
+    const c = text[i];
+    if(inQuotes){
+      if(c === '"'){
+        if(text[i+1] === '"'){ field += '"'; i++; }
+        else { inQuotes = false; }
+      } else field += c;
+    } else {
+      if(c === '"') inQuotes = true;
+      else if(c === ','){ row.push(field); field = ""; }
+      else if(c === '\n'){ row.push(field); rows.push(row); row = []; field = ""; }
+      else if(c === '\r'){ /* skip */ }
+      else field += c;
+    }
+  }
+  if(field.length || row.length){ row.push(field); rows.push(row); }
+  return rows.filter(r => r.some(c => c.trim() !== ""));
+}
+
+function isTeamHeaderRow(row){
+  const b = (row[1]||"").trim().toLowerCase();
+  const c = (row[2]||"").trim().toLowerCase();
+  return b === "title" && c === "status";
+}
+
+function parseSheet(rawRows){
+  let currentTeam = "عام";
+  const out = [];
+  rawRows.forEach(row=>{
+    if(row.length < 3) return;
+    if(isTeamHeaderRow(row)){
+      currentTeam = (row[0]||"").trim() || currentTeam;
+      return;
+    }
+    const who = (row[0]||"").trim();
+    const title = (row[1]||"").trim();
+    const status = (row[2]||"").trim();
+    const sideTask = (row[3]||"").trim();
+    if(!who || !title || !status) return;
+    if(who.toLowerCase() === "team" || title.toLowerCase() === "title") return;
+
+    const isVacant = who.toLowerCase() === "new hire" || who.includes("شاغر");
+    let code = "", name = "";
+    if(!isVacant){
+      if(who.startsWith('#')){
+        const cleaned = who.replace(/^#/,"");
+        const parts = cleaned.split("-");
+        code = parts[0] || "";
+        name = parts.slice(1).join("-") || cleaned;
+      } else {
+        name = who;
+      }
+    } else {
+      name = "وظيفة شاغرة";
+    }
+    out.push({ team: currentTeam, title, status, isVacant, code, name, sideTask });
+  });
+  return out;
+}
+
+function teamLabel(team){
+  return TEAM_LABELS_KNOWN[team] || team;
+}
+
+function setSyncState(kind, text){
+  const dot = document.getElementById('syncDot');
+  dot.className = 'dot' + (kind === 'error' ? ' err' : kind === 'loading' ? ' loading' : '');
+  document.getElementById('syncText').textContent = text;
+}
+
+async function loadData(){
+  setSyncState('loading', 'جاري التحميل...');
+  let rawRows = null;
+  let lastErr = null;
+
+  try{
+    const response = await loadViaJSONP();
+    rawRows = gvizResponseToRows(response);
+  }catch(err){
+    lastErr = err;
+    try{
+      rawRows = await loadViaFetch();
+    }catch(err2){
+      lastErr = err2;
+    }
+  }
+
+  if(!rawRows){
+    console.error(lastErr);
+    setSyncState('error', 'تعذر تحميل البيانات — اضغط تحديث');
+    document.getElementById('content').innerHTML =
+      '<div class="state-box error">تعذر الاتصال بالشيت مباشرة. تأكد من اتصال الإنترنت ثم اضغط "تحديث الآن".</div>';
+    return;
+  }
+
+  data = parseSheet(rawRows);
+  if(data.length === 0){
+    setSyncState('error', 'لم يتم العثور على بيانات صالحة');
+    document.getElementById('content').innerHTML =
+      '<div class="state-box error">تم الاتصال بالشيت لكن لم يتم العثور على صفوف بيانات صالحة.</div>';
+    return;
+  }
+
+  buildFilters();
+  renderStats();
+  render();
+  const now = new Date();
+  setSyncState('ok', 'آخر تحديث: ' + now.toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'}));
+}
+
+function buildFilters(){
+  const teams = [...new Set(data.map(d=>d.team))];
+  allTitles = [...new Set(data.map(d=>d.title))].sort();
+  const statuses = [...new Set(data.map(d=>d.status))];
+  const statusOrder = ["Full Time","Part Time","From Part To Full Time","From Full To Part Time","Terminated"];
+  statuses.sort((a,b)=> statusOrder.indexOf(a) - statusOrder.indexOf(b));
+
+  fillChips('teamChips', teams, teamLabel, t=>t, 'team');
+  fillChips('statusChips', ["Vacant", ...statuses], s => s === "Vacant" ? "شاغرة" : (STATUS_LABELS[s]||s), s=>s, 'status');
+  buildDropdownMenu();
+}
+
+function buildDropdownMenu(filterQuery = ''){
+  const listEl = document.getElementById('dropdownList');
+  listEl.innerHTML = '';
+
+  const q = filterQuery.toLowerCase().trim();
+  const filtered = q ? allTitles.filter(t => t.toLowerCase().includes(q)) : allTitles;
+
+  // Option All
+  if(!q){
+    const allBtn = document.createElement('button');
+    allBtn.type = 'button';
+    allBtn.className = 'dropdown-item' + (state.title === 'all' ? ' selected' : '');
+    allBtn.innerHTML = '<span>جميع التخصصات / المسميات</span><span class="count">' + data.length + '</span>';
+    allBtn.onclick = () => selectTitle('all');
+    listEl.appendChild(allBtn);
+  }
+
+  filtered.forEach(title => {
+    const count = data.filter(d => d.title === title).length;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'dropdown-item' + (state.title === title ? ' selected' : '');
+    btn.innerHTML = '<span>' + escapeHtml(title) + '</span><span class="count">' + count + '</span>';
+    btn.onclick = () => selectTitle(title);
+    listEl.appendChild(btn);
+  });
+
+  if(filtered.length === 0){
+    listEl.innerHTML = '<div style="padding:16px;text-align:center;font-size:12px;color:var(--ink-soft);">لا توجد تخصصات مطابقة للبحث</div>';
+  }
+}
+
+function selectTitle(title){
+  state.title = title;
+  const trigger = document.getElementById('dropdownTrigger');
+  const label = document.getElementById('dropdownLabel');
+  
+  if(title === 'all'){
+    label.textContent = 'جميع التخصصات / المسميات';
+    trigger.classList.remove('active');
+  } else {
+    label.textContent = title;
+    trigger.classList.add('active');
+  }
+
+  toggleDropdown(false);
+  buildDropdownMenu(document.getElementById('dropdownSearchInput').value);
+  render();
+}
+
+const dropdownTrigger = document.getElementById('dropdownTrigger');
+const dropdownMenu = document.getElementById('dropdownMenu');
+const dropdownSearchInput = document.getElementById('dropdownSearchInput');
+
+function toggleDropdown(show){
+  const isOpen = show !== undefined ? show : !dropdownMenu.classList.contains('show');
+  dropdownMenu.classList.toggle('show', isOpen);
+  dropdownTrigger.classList.toggle('open', isOpen);
+  if(isOpen){
+    setTimeout(() => dropdownSearchInput.focus(), 50);
+  }
+}
+
+dropdownTrigger.addEventListener('click', (e) => {
+  e.stopPropagation();
+  toggleDropdown();
+});
+
+dropdownSearchInput.addEventListener('input', (e) => {
+  buildDropdownMenu(e.target.value);
+});
+
+document.addEventListener('click', (e) => {
+  if(!e.target.closest('.dropdown-wrap')){
+    toggleDropdown(false);
+  }
+});
+
+function fillChips(containerId, items, labelFn, keyFn, stateKey){
+  const el = document.getElementById(containerId);
+  const prevActive = state[stateKey];
+  el.innerHTML = '';
+  const allBtn = document.createElement('button');
+  allBtn.className = 'chip' + (prevActive==='all' ? ' active' : '');
+  allBtn.dataset.val = 'all';
+  allBtn.textContent = 'الكل';
+  el.appendChild(allBtn);
+  items.forEach(item=>{
+    const val = keyFn(item);
+    const btn = document.createElement('button');
+    btn.className = 'chip' + (prevActive===val ? ' active' : '');
+    btn.dataset.val = val;
+    btn.textContent = labelFn(item);
+    el.appendChild(btn);
+  });
+  el.onclick = e=>{
+    const btn = e.target.closest('.chip');
+    if(!btn) return;
+    state[stateKey] = btn.dataset.val;
+    [...el.querySelectorAll('.chip')].forEach(c=>c.classList.toggle('active', c===btn));
+    render();
+  };
+}
+
+document.getElementById('searchBox').addEventListener('input', e=>{
+  state.q = e.target.value.trim().toLowerCase();
+  render();
+});
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  state.team='all'; state.status='all'; state.title='all'; state.q='';
+  document.getElementById('searchBox').value='';
+  document.getElementById('dropdownSearchInput').value='';
+  selectTitle('all');
+  document.querySelectorAll('.chips').forEach(el=>{
+    [...el.querySelectorAll('.chip')].forEach((c,i)=>c.classList.toggle('active', i===0));
+  });
+  render();
+});
+
+document.getElementById('refreshBtn').addEventListener('click', loadData);
+
+// Quick filter via stats cards
+document.querySelectorAll('.stat').forEach(statCard => {
+  statCard.addEventListener('click', () => {
+    const statusVal = statCard.dataset.status;
+    if(!statusVal) return;
+    state.status = (state.status === statusVal && statusVal !== 'all') ? 'all' : statusVal;
+    const statusChips = document.getElementById('statusChips');
+    [...statusChips.querySelectorAll('.chip')].forEach(c => {
+      c.classList.toggle('active', c.dataset.val === state.status);
+    });
+    render();
+  });
+});
+
+function matches(d){
+  if(state.team!=='all' && d.team!==state.team) return false;
+  if(state.status!=='all'){
+    if(state.status === 'Vacant'){ if(!d.isVacant) return false; }
+    else { if(d.isVacant || d.status!==state.status) return false; }
+  }
+  if(state.title!=='all' && d.title!==state.title) return false;
+  if(state.q){
+    const hay = (d.name+' '+d.code+' '+d.title+' '+(d.sideTask||'')).toLowerCase();
+    if(!hay.includes(state.q)) return false;
+  }
+  return true;
+}
+
+function renderStats(){
+  document.getElementById('statTotal').textContent = data.length;
+  document.getElementById('statVacant').textContent = data.filter(d=>d.isVacant).length;
+  document.getElementById('statFull').textContent = data.filter(d=>!d.isVacant && (d.status==='Full Time' || d.status==='From Part To Full Time')).length;
+  document.getElementById('statPart').textContent = data.filter(d=>!d.isVacant && (d.status==='Part Time' || d.status==='From Full To Part Time')).length;
+  document.getElementById('statTerm').textContent = data.filter(d=>d.status==='Terminated').length;
+}
+
+function getInitials(name){
+  if(!name) return 'ECQ';
+  const parts = name.trim().split(/\s+/);
+  if(parts.length >= 2){
+    return parts[0][0] + ' ' + parts[1][0];
+  }
+  return name.slice(0, 2);
+}
+
+function copyEmployeeDetails(text, btn){
+  navigator.clipboard.writeText(text).then(()=>{
+    const orig = btn.textContent;
+    btn.textContent = '✓ تم النسخ';
+    btn.style.color = '#059669';
+    setTimeout(()=>{
+      btn.textContent = orig;
+      btn.style.color = '';
+    }, 1600);
+  });
+}
+
+function render(){
+  const filtered = data.filter(matches);
+  const content = document.getElementById('content');
+  const resultLine = document.getElementById('resultLine');
+  resultLine.style.display = 'block';
+  resultLine.innerHTML = 'عرض <b>' + filtered.length + '</b> من أصل <b>' + data.length + '</b> سجل';
+
+  if(filtered.length===0){
+    content.innerHTML = '<div class="empty">لا توجد نتائج مطابقة لهذا الفلتر</div>';
+    return;
+  }
+
+  const teams = [...new Set(data.map(d=>d.team))];
+  let html = '';
+  teams.forEach(team=>{
+    const rows = filtered.filter(d=>d.team===team);
+    if(rows.length===0) return;
+    html += '<div class="team-section">';
+    html += '<div class="team-head"><h2>فريق ' + teamLabel(team) + '</h2><span class="line"></span><span class="tag">' + rows.length + ' سجل</span></div>';
+    html += '<div class="grid">';
+    
+    rows.forEach(d=>{
+      const cls = STATUS_CLASS[d.status] || 'other';
+      let label = STATUS_LABELS[d.status] || d.status;
+      let cardCls = 'employee-card';
+      let badgeCls = cls;
+      
+      if(d.isVacant){
+        cardCls += ' vacant';
+        badgeCls = 'vacant';
+        const typeLabel = d.status === 'Part Time' ? 'دوام جزئي' : (d.status === 'Full Time' ? 'دوام كامل' : label);
+        label = 'شاغرة &middot; ' + typeLabel;
+      }
+
+      const copyData = escapeHtml(d.name + ' - ' + d.title + ' (' + teamLabel(d.team) + ')' + (d.code ? ' [' + d.code + ']' : ''));
+
+      html += '<div class="' + cardCls + '">';
+      
+      // Card Top
+      html += '<div class="card-top">';
+      html += '<span class="team-pill">فريق ' + escapeHtml(teamLabel(d.team)) + '</span>';
+      html += '<span class="badge ' + badgeCls + '"><span class="dot-ind"></span>' + label + '</span>';
+      html += '</div>';
+
+      // Profile Block
+      html += '<div class="profile-block">';
+      if(d.isVacant){
+        html += '<div class="avatar vacant-avatar">➕</div>';
+        html += '<div class="name-block">';
+        html += '<div class="emp-name vacant-title">وظيفة شاغرة</div>';
+        html += '<span style="font-size:11px;color:#7c3aed;font-weight:600;">مطلوب للتوظيف</span>';
+        html += '</div>';
+      } else {
+        html += '<div class="avatar">' + escapeHtml(getInitials(d.name)) + '</div>';
+        html += '<div class="name-block">';
+        html += '<div class="emp-name" title="' + escapeHtml(d.name) + '">' + escapeHtml(d.name) + '</div>';
+        if(d.code){
+          html += '<span class="emp-code" title="كود الموظف">#' + escapeHtml(d.code) + '</span>';
+        }
+        html += '</div>';
+      }
+      html += '</div>';
+
+      // Specialization / Job Title Row
+      html += '<div class="title-row">';
+      html += '<span class="title-icon">💼</span>';
+      html += '<span class="title-text" title="' + escapeHtml(d.title) + '">' + escapeHtml(d.title) + '</span>';
+      html += '</div>';
+
+      // Side Task
+      if(d.sideTask){
+        html += '<div class="side-task"><span class="pin">📌</span><div class="task-content"><strong>تكليف إضافي: </strong>' + escapeHtml(d.sideTask) + '</div></div>';
+      }
+
+      if(d.isVacant){
+        html += '<div class="vacant-badge-box"><span>✨ متاح للتوظيف - يتم استقبال الترشيحات</span></div>';
+      }
+
+      // Card Footer
+      html += '<div class="card-footer">';
+      html += '<span>' + (STATUS_LABELS[d.status] || d.status) + '</span>';
+      html += '<button type="button" class="copy-btn" onclick="copyEmployeeDetails(\'' + copyData + '\', this)">📋 نسخ البيانات</button>';
+      html += '</div>';
+
+      html += '</div>'; // close card
+    });
+    
+    html += '</div></div>';
+  });
+
+  content.innerHTML = html;
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+loadData();
+if(AUTO_REFRESH_MINUTES > 0){
+  refreshTimer = setInterval(loadData, AUTO_REFRESH_MINUTES * 60 * 1000);
+}
+</script>
+</body>
+</html>
