@@ -1,6 +1,6 @@
 import { useState, MouseEvent } from 'react';
 import { EmployeeRecord, STATUS_LABELS, getTeamLabel } from '../types';
-import { Briefcase, Building2, Pin, Copy, Check, UserPlus } from 'lucide-react';
+import { Briefcase, Building2, Pin, Copy, Check, UserPlus, Clock, Calendar } from 'lucide-react';
 
 interface EmployeeCompactRowProps {
   employee: EmployeeRecord;
@@ -12,10 +12,18 @@ export function EmployeeCompactRow({ employee }: EmployeeCompactRowProps) {
 
   const handleCopy = (e: MouseEvent) => {
     e.stopPropagation();
-    const details = `${employee.name} - ${employee.title} (${employee.team}) ${
-      employee.code ? `[${employee.code}]` : ''
-    }`;
-    navigator.clipboard.writeText(details);
+    const parts = [
+      `${employee.name} - ${employee.title} (${getTeamLabel(employee.team)}) ${
+        employee.code ? `[${employee.code}]` : ''
+      }`,
+    ];
+    if (employee.workingHours) {
+      parts.push(`مواعيد العمل: ${employee.workingHours}`);
+    }
+    if (employee.vacations) {
+      parts.push(`الإجازة: ${employee.vacations}`);
+    }
+    navigator.clipboard.writeText(parts.join(' | '));
     setCopied(true);
     setTimeout(() => setCopied(false), 1800);
   };
@@ -105,7 +113,27 @@ export function EmployeeCompactRow({ employee }: EmployeeCompactRowProps) {
         </div>
       </div>
 
-      <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0">
+      <div className="flex items-center justify-between sm:justify-end gap-2 shrink-0 flex-wrap">
+        {employee.workingHours && (
+          <div
+            className="hidden lg:flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-800 text-[11px] border border-emerald-200"
+            title={`مواعيد العمل: ${employee.workingHours}`}
+          >
+            <Clock className="w-3 h-3 text-emerald-600 shrink-0" />
+            <span className="font-mono font-medium" dir="ltr">{employee.workingHours}</span>
+          </div>
+        )}
+
+        {employee.vacations && (
+          <div
+            className="hidden xl:flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-sky-50 text-sky-800 text-[11px] border border-sky-200"
+            title={`الإجازة: ${employee.vacations}`}
+          >
+            <Calendar className="w-3 h-3 text-sky-600 shrink-0" />
+            <span className="font-medium">{employee.vacations}</span>
+          </div>
+        )}
+
         {employee.sideTask && (
           <div
             className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-900 text-xs border border-amber-200 max-w-xs truncate"

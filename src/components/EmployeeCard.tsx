@@ -10,6 +10,7 @@ import {
   Building2,
   Clock,
   Sparkles,
+  Calendar,
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -23,10 +24,18 @@ export function EmployeeCard({ employee }: EmployeeCardProps) {
 
   const handleCopy = (e: MouseEvent) => {
     e.stopPropagation();
-    const details = `${employee.name} - ${employee.title} (${employee.team}) ${
-      employee.code ? `[${employee.code}]` : ''
-    }`;
-    navigator.clipboard.writeText(details);
+    const parts = [
+      `${employee.name} - ${employee.title} (${getTeamLabel(employee.team)}) ${
+        employee.code ? `[${employee.code}]` : ''
+      }`,
+    ];
+    if (employee.workingHours) {
+      parts.push(`مواعيد العمل: ${employee.workingHours}`);
+    }
+    if (employee.vacations) {
+      parts.push(`الإجازة: ${employee.vacations}`);
+    }
+    navigator.clipboard.writeText(parts.join(' | '));
     setCopied(true);
     setTimeout(() => setCopied(false), 1800);
   };
@@ -214,6 +223,39 @@ export function EmployeeCard({ employee }: EmployeeCardProps) {
             </div>
           </div>
         </div>
+
+        {/* Working Hours & Vacations Details */}
+        {(employee.workingHours || employee.vacations) && (
+          <div className="mt-3 flex flex-col gap-1.5 text-xs">
+            {employee.workingHours && (
+              <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-emerald-50/80 border border-emerald-200/80 text-emerald-900">
+                <Clock className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <div className="flex items-center gap-1.5 overflow-hidden">
+                  <span className="font-bold text-[11px] text-emerald-800 shrink-0">
+                    مواعيد العمل:
+                  </span>
+                  <span className="font-semibold text-[11.5px] truncate font-mono" dir="ltr">
+                    {employee.workingHours}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {employee.vacations && (
+              <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-sky-50/80 border border-sky-200/80 text-sky-900">
+                <Calendar className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+                <div className="flex items-center gap-1.5 overflow-hidden">
+                  <span className="font-bold text-[11px] text-sky-800 shrink-0">
+                    الإجازة الأسبوعية:
+                  </span>
+                  <span className="font-semibold text-[11.5px] truncate">
+                    {employee.vacations}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Side Task (المهمة الجانبية / التكليف الإضافي) */}
         {employee.sideTask && (

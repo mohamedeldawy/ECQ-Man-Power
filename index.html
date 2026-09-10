@@ -448,6 +448,34 @@
   .title-icon{color:var(--ink-soft);font-size:13px;display:flex;}
   .title-text{font-size:13px;font-weight:700;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
+  .schedule-grid{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    margin-top:6px;
+  }
+  .schedule-pill{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:7px 11px;
+    border-radius:12px;
+    font-size:12px;
+  }
+  .schedule-pill.hours{
+    background:#ecfdf5;
+    border:1px solid #a7f3d0;
+    color:#065f46;
+  }
+  .schedule-pill.vacations{
+    background:#f0f9ff;
+    border:1px solid #bae6fd;
+    color:#0369a1;
+  }
+  .schedule-pill .s-icon{flex-shrink:0;font-size:13px;}
+  .schedule-pill .s-label{font-weight:700;margin-left:4px;opacity:.9;font-size:11px;}
+  .schedule-pill .s-val{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11.5px;}
+
   .side-task{
     background:var(--amber-bg);
     border:1px solid var(--amber-border);
@@ -727,6 +755,8 @@ function parseSheet(rawRows){
     const title = (row[1]||"").trim();
     const status = (row[2]||"").trim();
     const sideTask = (row[3]||"").trim();
+    const workingHours = (row[4]||"").trim();
+    const vacations = (row[5]||"").trim();
     if(!who || !title || !status) return;
     if(who.toLowerCase() === "team" || title.toLowerCase() === "title") return;
 
@@ -744,7 +774,7 @@ function parseSheet(rawRows){
     } else {
       name = "وظيفة شاغرة";
     }
-    out.push({ team: currentTeam, title, status, isVacant, code, name, sideTask });
+    out.push({ team: currentTeam, title, status, isVacant, code, name, sideTask, workingHours, vacations });
   });
   return out;
 }
@@ -955,7 +985,7 @@ function matches(d){
   }
   if(state.title!=='all' && d.title!==state.title) return false;
   if(state.q){
-    const hay = (d.name+' '+d.code+' '+d.title+' '+(d.sideTask||'')).toLowerCase();
+    const hay = (d.name+' '+d.code+' '+d.title+' '+(d.sideTask||'')+' '+(d.workingHours||'')+' '+(d.vacations||'')).toLowerCase();
     if(!hay.includes(state.q)) return false;
   }
   return true;
@@ -1024,7 +1054,10 @@ function render(){
         label = 'شاغرة &middot; ' + typeLabel;
       }
 
-      const copyData = escapeHtml(d.name + ' - ' + d.title + ' (' + teamLabel(d.team) + ')' + (d.code ? ' [' + d.code + ']' : ''));
+      let copyText = d.name + ' - ' + d.title + ' (' + teamLabel(d.team) + ')' + (d.code ? ' [' + d.code + ']' : '');
+      if(d.workingHours) copyText += ' | مواعيد العمل: ' + d.workingHours;
+      if(d.vacations) copyText += ' | الإجازة: ' + d.vacations;
+      const copyData = escapeHtml(copyText);
 
       html += '<div class="' + cardCls + '">';
       
@@ -1058,6 +1091,24 @@ function render(){
       html += '<span class="title-icon">💼</span>';
       html += '<span class="title-text" title="' + escapeHtml(d.title) + '">' + escapeHtml(d.title) + '</span>';
       html += '</div>';
+
+      // Working Hours & Vacations
+      if(d.workingHours || d.vacations){
+        html += '<div class="schedule-grid">';
+        if(d.workingHours){
+          html += '<div class="schedule-pill hours">';
+          html += '<span class="s-icon">⏰</span>';
+          html += '<div style="display:flex;align-items:center;gap:4px;overflow:hidden;width:100%;"><span class="s-label">مواعيد العمل:</span><span class="s-val" dir="ltr">' + escapeHtml(d.workingHours) + '</span></div>';
+          html += '</div>';
+        }
+        if(d.vacations){
+          html += '<div class="schedule-pill vacations">';
+          html += '<span class="s-icon">📅</span>';
+          html += '<div style="display:flex;align-items:center;gap:4px;overflow:hidden;width:100%;"><span class="s-label">الإجازة الأسبوعية:</span><span class="s-val">' + escapeHtml(d.vacations) + '</span></div>';
+          html += '</div>';
+        }
+        html += '</div>';
+      }
 
       // Side Task
       if(d.sideTask){

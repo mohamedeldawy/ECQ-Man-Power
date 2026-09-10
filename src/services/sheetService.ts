@@ -182,6 +182,8 @@ export function parseSheetRows(rawRows: string[][]): EmployeeRecord[] {
     const title = (row[1] || '').trim();
     const status = (row[2] || '').trim();
     const sideTask = (row[3] || '').trim();
+    const workingHours = (row[4] || '').trim();
+    const vacations = (row[5] || '').trim();
 
     if (!who || !title || !status) return;
     if (who.toLowerCase() === 'team' || title.toLowerCase() === 'title') return;
@@ -212,6 +214,8 @@ export function parseSheetRows(rawRows: string[][]): EmployeeRecord[] {
       code,
       name,
       sideTask: sideTask || undefined,
+      workingHours: workingHours || undefined,
+      vacations: vacations || undefined,
     });
   });
 

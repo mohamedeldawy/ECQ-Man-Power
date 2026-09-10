@@ -6,6 +6,8 @@ export interface EmployeeRecord {
   code: string;
   name: string;
   sideTask?: string;
+  workingHours?: string;
+  vacations?: string;
 }
 
 export interface FilterState {
